@@ -30,23 +30,27 @@ io.on("connection", (socket) => {
   });
 
   socket.on("updateUserMessage", (index, message) => {
-    console.log(index, message, "updateUserMessage")
+    console.log(index, message, "updateUserMessage");
     users[index].message = message;
     io.emit("users", users);
   });
 
   socket.on("updateUserLocation", (index, lat, lng) => {
-    console.log(index, lat, lng, "updateUserLocation")
+    console.log(index, lat, lng, "updateUserLocation");
     users[index].lat = lat;
     users[index].lng = lng;
     io.emit("users", users);
   });
 
+  socket.on("resetUsers", () => {
+    users = [];
+    io.emit("users", users);
+  } );
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
 });
-
 
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
