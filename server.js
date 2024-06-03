@@ -35,6 +35,13 @@ io.on("connection", (socket) => {
     io.emit("users", users);
   });
 
+  socket.on("updateUserLocation", (index, lat, lng) => {
+    console.log(index, lat, lng, "updateUserLocation")
+    users[index].lat = lat;
+    users[index].lng = lng;
+    io.emit("users", users);
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
