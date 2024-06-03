@@ -33,12 +33,14 @@ io.on("connection", (socket) => {
     console.log(index, lat, lng, "updateUserLocation");
     users[index].lat = lat;
     users[index].lng = lng;
-    io.emit("users", users);
+    // io.broadcast.emit("users", users);
+    socket.broadcast.emit("users", users);
   });
 
   socket.on("resetUsers", () => {
     users = [];
-    io.emit("users", users);
+    // io.emit("users", users);
+    socket.emit("users", users);
   });
 
   socket.on("disconnect", () => {
