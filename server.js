@@ -29,12 +29,6 @@ io.on("connection", (socket) => {
     io.emit("users", users);
   });
 
-  socket.on("updateUserMessage", (index, message) => {
-    console.log(index, message, "updateUserMessage");
-    users[index].message = message;
-    io.emit("users", users);
-  });
-
   socket.on("updateUserLocation", (index, lat, lng) => {
     console.log(index, lat, lng, "updateUserLocation");
     users[index].lat = lat;
@@ -45,7 +39,7 @@ io.on("connection", (socket) => {
   socket.on("resetUsers", () => {
     users = [];
     io.emit("users", users);
-  } );
+  });
 
   socket.on("disconnect", () => {
     console.log("Client disconnected");
