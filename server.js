@@ -9,38 +9,23 @@ app.use(cors());
 const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: "*" } });
 
-const PORT = process.env.PORT || 4000;
-
 let users = [];
 
+const PORT = process.env.PORT || 4000;
 io.on("connection", (socket) => {
   console.log("New client connected");
 
-  socket.emit("users", users);
-
-  socket.on("addUser", (data) => {
-    users.push({
-      name: data.username,
-      lat: data.lat,
-      lng: data.lng,
-      index: users.length,
-    });
-    console.log(users, "addUser");
+  socket.on("addAnUser", (user) => {
+    console.log(user, "=====> user");
+    users.push(user);
+    console.log(users, "users");
     io.emit("users", users);
   });
 
-  socket.on("updateUserLocation", (index, lat, lng) => {
-    console.log(index, lat, lng, "updateUserLocation");
-    users[index].lat = lat;
-    users[index].lng = lng;
-    // io.broadcast.emit("users", users);
-    socket.broadcast.emit("users", users);
-  });
-
-  socket.on("resetUsers", () => {
-    users = [];
-    // io.emit("users", users);
-    socket.emit("users", users);
+  socket.on("checkExistingUser", (mobile) => {
+    const existingUser = users.find((user) => user.mobile === mobile);
+    console.log(existingUser, "existingUser");
+    socket.emit("existingUser", !!existingUser);
   });
 
   socket.on("disconnect", () => {
@@ -51,3 +36,4 @@ io.on("connection", (socket) => {
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
