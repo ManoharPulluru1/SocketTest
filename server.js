@@ -19,9 +19,10 @@ io.on("connection", (socket) => {
   socket.on("addAnUser", (user) => {
     if (!users.find(u => u.mobile === user.mobile)) {
       users.push(user);
-      io.emit("users", users);
+      socket.emit("users", users);
     }
   });
+  
 
   socket.emit("users", users);
 
@@ -51,7 +52,7 @@ io.on("connection", (socket) => {
       console.log(user, "=====> user after update")
       console.log(users, "=====> users after update");
 
-      io.emit("userLocation", { mobile, userLocation });
+      socket.emit("userLocation", { mobile, userLocation });
     }
   });
 
