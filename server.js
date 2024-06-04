@@ -11,15 +11,19 @@ const io = socketIo(server, { cors: { origin: "*" } });
 
 let users = [];
 
-
 const PORT = process.env.PORT || 4000;
+
 io.on("connection", (socket) => {
   console.log("New client connected");
 
   socket.on("addAnUser", (user) => {
-    users.push(user);
-    io.emit("users", users);
+    if (!users.find(u => u.mobile === user.mobile)) {
+      users.push(user);
+      io.emit("users", users);
+    }
   });
+
+  socket.emit("users", users);
 
   socket.on("getUserName", (mobile) => {
     const user = users.find((user) => user.mobile === mobile);
@@ -39,9 +43,14 @@ io.on("connection", (socket) => {
   socket.on("updateUserLocation", ({ userLocation, mobile }) => {
     console.log(userLocation, mobile);
     const user = users.find((user) => user.mobile === mobile);
+    console.log(user, "=====> user before update")
+    console.log(users, "=====> users before update");
     if (user) {
       user.lat = userLocation.lat;
       user.lng = userLocation.lng;
+      console.log(user, "=====> user after update")
+      console.log(users, "=====> users after update");
+
       io.emit("userLocation", { mobile, userLocation });
     }
   });
