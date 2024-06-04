@@ -36,6 +36,16 @@ io.on("connection", (socket) => {
     socket.emit("existingUser", !!existingUser);
   });
 
+  socket.on("updateUserLocation", ({ userLocation, mobile }) => {
+    console.log(userLocation, mobile);
+    const user = users.find((user) => user.mobile === mobile);
+    if (user) {
+      user.lat = userLocation.lat;
+      user.lng = userLocation.lng;
+      io.emit("userLocation", { mobile, userLocation });
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
