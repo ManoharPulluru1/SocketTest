@@ -11,20 +11,28 @@ const io = socketIo(server, { cors: { origin: "*" } });
 
 let users = [];
 
+
 const PORT = process.env.PORT || 4000;
 io.on("connection", (socket) => {
   console.log("New client connected");
 
   socket.on("addAnUser", (user) => {
-    console.log(user, "=====> user");
     users.push(user);
-    console.log(users, "users");
     io.emit("users", users);
+  });
+
+  socket.on("getUserName", (mobile) => {
+    const user = users.find((user) => user.mobile === mobile);
+    if (user) {
+      socket.emit("userName", user.userName);
+      console.log(user.userName, "-------------user");
+    } else {
+      socket.emit("userName", null); // Emit null or an appropriate message if the user is not found
+    }
   });
 
   socket.on("checkExistingUser", (mobile) => {
     const existingUser = users.find((user) => user.mobile === mobile);
-    console.log(existingUser, "existingUser");
     socket.emit("existingUser", !!existingUser);
   });
 
@@ -36,4 +44,3 @@ io.on("connection", (socket) => {
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
-
