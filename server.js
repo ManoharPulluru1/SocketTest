@@ -21,26 +21,40 @@ io.on("connection", (socket) => {
   socket.on("addAnUser", (user) => {
     if (!users.find(u => u.mobile === user.mobile)) {
       users.push(user);
-      socket.emit("users", users);
+      io.emit("users", users);  // Emit updated users list
     }
   });
 
+  socket.on('updateUserLocation', (user) => {
+    const userToUpdate = users.find(u => u.mobile === user.mobile);
+    if (userToUpdate) {
+      // Update the latitude and longitude
+      userToUpdate.lat = user.lat;
+      userToUpdate.lng = user.lng;
+      console.log(`Updated user: ${JSON.stringify(userToUpdate)}`);
+      
+      // Emit the updated users list
+      io.emit("users", users);
+    } else {
+      console.log('User not found');
+    }
+  });
 
   socket.on("getUserName", (mobile) => {
     const user = users.find((user) => user.mobile === mobile);
     if (user) {
       socket.emit("userName", user.userName);
-      console.log(user.userName, "-------------user");
     } else {
+
       socket.emit("userName", null);
     }
+    
   });
 
   socket.on("checkExistingUser", (mobile) => {
     const existingUser = users.find((user) => user.mobile === mobile);
     socket.emit("existingUser", !!existingUser);
   });
-
 
   socket.on("disconnect", () => {
     console.log("Client disconnected");
