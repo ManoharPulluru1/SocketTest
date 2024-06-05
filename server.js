@@ -49,12 +49,17 @@ io.on("connection", (socket) => {
       socket.emit("userName", null);
     }
 
-    
+
   });
 
   socket.on("checkExistingUser", (mobile) => {
     const existingUser = users.find((user) => user.mobile === mobile);
     socket.emit("existingUser", !!existingUser);
+  });
+
+  socket.on("deleteUser", (mobile) => {
+    users = users.filter((user) => user.mobile !== mobile);
+    io.emit("users", users);
   });
 
   socket.on("disconnect", () => {
